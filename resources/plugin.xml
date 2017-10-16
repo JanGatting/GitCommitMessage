@@ -1,8 +1,8 @@
 <idea-plugin>
   <id>git-commit-message-plugin</id>
-  <name>Plugin display name here</name>
+  <name>Git Commit Message Plugin</name>
   <version>1.0</version>
-  <vendor email="jangatting@gmx.de" url="http://www.yourcompany.com">YourCompany</vendor>
+  <vendor email="jangatting@gmx.de">JG</vendor>
 
   <description><![CDATA[
       Enter short description for your plugin here.<br>
@@ -32,7 +32,7 @@
   </extensions>
 
   <actions>
-    <action id="de.gatting.scm.OpenPanelAction" class="de.gatting.scm.OpenPanelAction"
+    <action id="OpenPanelAction" class="de.gatting.scm.OpenPanelAction"
             text="Commit message"
             description="Commit message"
             icon="Icons.LOAD">
