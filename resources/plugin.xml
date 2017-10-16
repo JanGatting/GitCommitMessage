@@ -1,12 +1,14 @@
 <idea-plugin>
   <id>git-commit-message-plugin</id>
   <name>Git Commit Message Plugin</name>
-  <version>1.0</version>
+  <version>0.1 alpha</version>
   <vendor email="jangatting@gmx.de">JG</vendor>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+      Create structured Git commit messages easily.<br/>
+      The structure is defined within a template, that is customized by the user himself.<br/>
+      Ticket names are extracted from current git branches<br/>
+      e.g. feature/JiraId-1234 (git branch) -> JiraId-1234 (ticket)
     ]]></description>
 
   <change-notes><![CDATA[
