@@ -5,20 +5,28 @@ import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
 import git4idea.GitLocalBranch;
 import git4idea.branch.GitBranchUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 
 public class Panel {
     private JPanel mainPanel;
-    private JTextField branch;
+    private JTextField ticket;
     private JTextField shortDescription;
     private JTextArea longDescription;
     private JButton changeTemplateButton;
 
     Panel(Project project) {
-
         GitLocalBranch currentBranch = GitBranchUtil.getCurrentRepository(project).getCurrentBranch();
-        branch.setText(currentBranch.getName());
+        // Branch name  matches Ticket Name
+        String branch = currentBranch.getName().trim();
+        // If e.g feature branch feature/JiraId-1234
+        if (branch.contains("/")) {
+            ticket.setText(StringUtils.substringAfterLast(branch, "/"));
+        } else {
+            ticket.setText(currentBranch.getName());
+        }
+
         changeTemplateButton.addActionListener(e -> {
             DialogWrapper dialog = createTemplateDialog(project);
             dialog.show();
@@ -29,8 +37,8 @@ public class Panel {
         return mainPanel;
     }
 
-    public String getBranch() {
-        return branch.getText().trim();
+    public String getTicket() {
+        return this.ticket.getText();
     }
 
     public String getShortDescription() {
@@ -45,6 +53,7 @@ public class Panel {
     public DialogWrapper createTemplateDialog(Project project) {
         Template template = new Template(project);
         DialogBuilder builder = new DialogBuilder(project);
+        builder.setTitle("Git Commit Message Plugin.");
         builder.setCenterPanel(template.getMainPanel());
         builder.removeAllActions();
         builder.addOkAction();

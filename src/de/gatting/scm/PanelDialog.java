@@ -7,7 +7,6 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +35,7 @@ public class PanelDialog extends DialogWrapper {
         String templateString = fileHandler.loadFile(project);
 
         Map<String, String> valuesMap = new HashMap();
-        valuesMap.put(Consts.GIT_BRANCH, getBranch());
+        valuesMap.put(Consts.TICKET, getBranch());
         valuesMap.put(Consts.SHORT_DESCRIPTION, panel.getShortDescription());
         valuesMap.put(Consts.LONG_DESCRIPTION, getLongDescription(templateString));
         StrSubstitutor sub = new StrSubstitutor(valuesMap);
@@ -54,7 +53,7 @@ public class PanelDialog extends DialogWrapper {
     }
 
     private String getBranch() {
-        return panel.getBranch();
+        return panel.getTicket();
     }
 
     /**
