@@ -1,9 +1,12 @@
 package de.gatting.scm;
 
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.PluginManager;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.lang.text.StrSubstitutor;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -18,7 +21,12 @@ public class PanelDialog extends DialogWrapper {
     PanelDialog(@Nullable Project project) {
         super(project);
         panel = new Panel(project);
-        setTitle("Git Commit Message Plugin. Version: " + Consts.VERSION);
+        IdeaPluginDescriptor pluginDescriptor = PluginManager.getPlugin(PluginId.getId("git-commit-message-plugin"));
+        String version = "";
+        if (pluginDescriptor != null) {
+            version = pluginDescriptor.getVersion();
+        }
+        setTitle("Git Commit Message Plugin. Version: " + version);
         setOKButtonText("OK");
         setSize(300, 200);
         init();
@@ -31,10 +39,9 @@ public class PanelDialog extends DialogWrapper {
     }
 
     String getCommitMessage(Project project) {
-        TemplateFileHandler fileHandler = new TemplateFileHandler();
-        String templateString = fileHandler.loadFile(project);
+        String templateString = TemplateFileHandler.loadFile(project);
 
-        Map<String, String> valuesMap = new HashMap();
+        Map<String, String> valuesMap = new HashMap<>();
         valuesMap.put(Consts.TICKET, getBranch());
         valuesMap.put(Consts.SHORT_DESCRIPTION, panel.getShortDescription());
         valuesMap.put(Consts.LONG_DESCRIPTION, getLongDescription(templateString));
