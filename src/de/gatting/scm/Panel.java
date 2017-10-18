@@ -60,7 +60,7 @@ public class Panel {
         Template template = new Template(project);
 
         DialogBuilder builder = new DialogBuilder(project);
-        builder.setTitle("Git Commit Message Plugin.");
+        builder.setTitle("Git Commit Message Template.");
         builder.setCenterPanel(template.getMainPanel());
         builder.removeAllActions();
         builder.addOkAction();

@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>git-commit-message-plugin</id>
   <name>Git Commit Message Plugin</name>
-  <version>0.2 alpha</version>
+  <version>0.3 alpha</version>
   <vendor email="jangatting@gmx.de">JG</vendor>
 
   <description><![CDATA[
@@ -12,7 +12,7 @@
     ]]></description>
 
   <change-notes><![CDATA[
-      - resolved Bugs
+      - added help text on template panel
     ]]>
   </change-notes>
 

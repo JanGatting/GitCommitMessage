@@ -8,6 +8,7 @@ public class Template {
 
     private JPanel mainPanel;
     private JTextArea templateContent;
+    private JTextPane helpPane;
 
     public Template(Project project) {
         templateContent.setText(TemplateFileHandler.loadFile(project));
