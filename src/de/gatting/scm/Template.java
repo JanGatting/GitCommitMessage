@@ -1,12 +1,8 @@
 package de.gatting.scm;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
 
 public class Template {
 
