@@ -1,18 +1,20 @@
 <idea-plugin>
   <id>git-commit-message-plugin</id>
   <name>Git Commit Message Plugin</name>
-  <version>0.3 alpha</version>
+  <version>0.4 alpha</version>
   <vendor email="jangatting@gmx.de">JG</vendor>
 
   <description><![CDATA[
-      Create structured Git commit messages easily.<br/>
+      <b>Create Git commit messages.</b><br/>
       The structure is defined within a template, that is customized by the user himself.<br/>
       Ticket names are extracted from current git branches<br/>
-      e.g. feature/JiraId-1234 (git branch) -> JiraId-1234 (ticket)
+      e.g. feature/JiraId-1234 (git branch) -> JiraId-1234 (ticket)<br/>
+      <br />
+      <b>Donate</b> using <a href="https://www.paypal.me/JanGatting" rel="nofollow">PayPal</a>
     ]]></description>
 
   <change-notes><![CDATA[
-      - added help text on template panel
+      - updated description
     ]]>
   </change-notes>
 
