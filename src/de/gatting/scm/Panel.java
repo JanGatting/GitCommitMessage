@@ -3,14 +3,11 @@ package de.gatting.scm;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
 import git4idea.GitLocalBranch;
 import git4idea.branch.GitBranchUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.zmlx.hg4idea.branch.HgBranchUtil;
-import org.zmlx.hg4idea.repo.HgRepository;
+import org.apache.commons.lang.StringUtils;
 import org.zmlx.hg4idea.util.HgUtil;
 
 import javax.swing.*;
