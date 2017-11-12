@@ -1,8 +1,8 @@
-<idea-plugin>
+<idea-plugin url="https://github.com/JanGatting/GitCommitMessage">
   <id>git-commit-message-plugin</id>
   <name>Git Commit Message Plugin</name>
-  <version>0.6 alpha</version>
-  <vendor email="jangatting@gmx.de">JG</vendor>
+  <version>1.1</version>
+  <vendor email="jangatting@gmx.de">Jan Gatting</vendor>
 
   <description><![CDATA[
       <b>Create Git commit messages.</b><br/>
@@ -14,7 +14,8 @@
     ]]></description>
 
   <change-notes><![CDATA[
-      - updated description
+      - Dialog Panel Resize Bug fixed
+      - New feature: Get commit message without open the dialog
     ]]>
   </change-notes>
 
@@ -35,13 +36,20 @@
   </extensions>
 
   <actions>
-    <action id="OpenPanelAction" class="de.gatting.scm.OpenPanelAction"
-            text="Commit message"
-            description="Commit message"
-            icon="Icons.LOAD">
-      <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
-    </action>
 
+      <action id="git-commit-message-plugin.OpenPanelAction" class="de.gatting.scm.OpenPanelAction"
+              text="Commit message dialog"
+              description="Commit message dialog"
+              icon="AllIcons.Actions.EditSource" >
+        <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
+      </action>
+      <action id="git-commit-message-plugin.GetCommitMessageAction" class="de.gatting.scm.GetCommitMessageAction"
+              text="Commit message"
+              description="Commit message" keymap="$default"
+              icon="AllIcons.Actions.MoveDown" >
+        <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
+        <keyboard-shortcut first-keystroke="control K" keymap="$default"  />
+      </action>
   </actions>
 
 </idea-plugin>
