@@ -49,34 +49,15 @@ public class GetCommitMessageAction extends AnAction {
         String templateString = TemplateFileHandler.loadFile(project);
 
         Map<String, String> valuesMap = new HashMap<>();
-        valuesMap.put(Consts.TICKET, getBranch(project));
+        String branchName = CommitMessage.extractBranchName(project);
+        String[] branchParts = CommitMessage.splitBranchName(branchName);
+        if (branchParts.length > 1) {
+            valuesMap.put(Consts.TICKET, branchParts[1]);
+        }
         valuesMap.put(Consts.SHORT_DESCRIPTION, "");
         valuesMap.put(Consts.LONG_DESCRIPTION, "");
         StrSubstitutor sub = new StrSubstitutor(valuesMap);
         return sub.replace(templateString);
-    }
-
-
-    private String getBranch(final Project project) {
-        String branch = "";
-        ProjectLevelVcsManager instance = ProjectLevelVcsManagerImpl.getInstance(project);
-        if (instance.checkVcsIsActive("Git")) {
-            GitLocalBranch currentBranch = GitBranchUtil.getCurrentRepository(project).getCurrentBranch();
-
-            if (currentBranch != null) {
-                // Branch name  matches Ticket Name
-                branch = currentBranch.getName().trim();
-            }
-        } else if (instance.checkVcsIsActive("Mercurial")) {
-            branch = HgUtil.getCurrentRepository(project).getCurrentBranch();
-        }
-
-        // If e.g feature branch feature/JiraId-1234
-        if (branch != null && branch.contains("/")) {
-            return StringUtils.substringAfterLast(branch, "/");
-        }
-        return branch;
-
     }
 
 }
