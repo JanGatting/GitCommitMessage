@@ -15,7 +15,6 @@ import java.util.Map;
 
 public class PanelDialog extends DialogWrapper {
 
-
     private final Panel panel;
 
     PanelDialog(@Nullable Project project) {
@@ -26,7 +25,7 @@ public class PanelDialog extends DialogWrapper {
         if (pluginDescriptor != null) {
             version = pluginDescriptor.getVersion();
         }
-        setTitle("Git Commit Message Plugin. Version: " + version);
+        setTitle("Git / Hg Mercurial Commit Message Plugin. Version: " + version);
         setOKButtonText("OK");
         setSize(300, 200);
         init();

@@ -4,9 +4,12 @@ import com.google.common.base.CharMatcher;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.vcs.ProjectLevelVcsManager;
+import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
 import git4idea.GitLocalBranch;
 import git4idea.branch.GitBranchUtil;
 import org.apache.commons.lang.StringUtils;
+import org.zmlx.hg4idea.util.HgUtil;
 
 import javax.swing.*;
 
@@ -20,8 +23,20 @@ public class Panel {
     private CharMatcher CLEANER = CharMatcher.anyOf("-_").precomputed();
 
     Panel(Project project) {
-        GitLocalBranch currentBranch = GitBranchUtil.getCurrentRepository(project).getCurrentBranch();
-        if (currentBranch != null) {
+
+        String branch = "";
+        ProjectLevelVcsManager instance = ProjectLevelVcsManagerImpl.getInstance(project);
+        if (instance.checkVcsIsActive("Git")) {
+            GitLocalBranch currentBranch = GitBranchUtil.getCurrentRepository(project).getCurrentBranch();
+
+            if (currentBranch != null) {
+                // Branch name  matches Ticket Name
+                branch = currentBranch.getName().trim();
+            }
+        } else if (instance.checkVcsIsActive("Mercurial")) {
+            branch = HgUtil.getCurrentRepository(project).getCurrentBranch();
+        }
+        if (branch != null) {
             // Branch name  matches Ticket Name
             setTextFieldsBasedOnBranch(currentBranch.getName().trim());
         }
@@ -56,7 +71,7 @@ public class Panel {
         Template template = new Template(project);
 
         DialogBuilder builder = new DialogBuilder(project);
-        builder.setTitle("Git Commit Message Template.");
+        builder.setTitle("Git / Hg Mercurial Commit Message Template.");
         builder.setCenterPanel(template.getMainPanel());
         builder.removeAllActions();
         builder.addOkAction();
