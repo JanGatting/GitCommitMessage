@@ -4,12 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.vcs.ProjectLevelVcsManager;
-import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
-import git4idea.GitLocalBranch;
-import git4idea.branch.GitBranchUtil;
 import org.apache.commons.lang.StringUtils;
-import org.zmlx.hg4idea.util.HgUtil;
 
 import javax.swing.*;
 
@@ -24,21 +19,10 @@ public class Panel {
 
     Panel(Project project) {
 
-        String branch = "";
-        ProjectLevelVcsManager instance = ProjectLevelVcsManagerImpl.getInstance(project);
-        if (instance.checkVcsIsActive("Git")) {
-            GitLocalBranch currentBranch = GitBranchUtil.getCurrentRepository(project).getCurrentBranch();
-
-            if (currentBranch != null) {
-                // Branch name  matches Ticket Name
-                branch = currentBranch.getName().trim();
-            }
-        } else if (instance.checkVcsIsActive("Mercurial")) {
-            branch = HgUtil.getCurrentRepository(project).getCurrentBranch();
-        }
+        String branch = CommitMessage.extractBranchName(project);
         if (branch != null) {
             // Branch name  matches Ticket Name
-            setTextFieldsBasedOnBranch(currentBranch.getName().trim());
+            setTextFieldsBasedOnBranch(branch);
         }
 
         changeTemplateButton.addActionListener(e -> {
@@ -87,24 +71,37 @@ public class Panel {
         final String[] branchParts = branch.split("/");
         // If e.g feature branch feature/JiraId-1234
         switch (branchParts.length) {
-            case 0: parseTicket(branch, ticket); break;
-            case 1: parseTicket(branchParts[1], ticket); break;
-            case 2: parseTicketAndShortDesc(branch, ticket, shortDescription); break;
-            default: parseAllFields(branch, ticket, shortDescription, longDescription); break;
+            case 0:
+                parseTicket(branch, ticket);
+                break;
+            case 1:
+                parseTicket(branchParts[1], ticket);
+                break;
+            case 2:
+                parseTicketAndShortDesc(branch, ticket, shortDescription);
+                break;
+            default:
+                parseAllFields(branch, ticket, shortDescription, longDescription);
+                break;
         }
     }
 
     private void parseTicket(String branchName, JTextField ticket) {
-        ticket.setText(branchName.toUpperCase());
+        ticket.setText(branchName);
     }
 
     private void parseTicketAndShortDesc(String branchName, JTextField ticket, JTextField shortDescription) {
-        String[] branchParts = branchName.split("/");
+        String[] branchParts = CommitMessage.splitBranchName(branchName);
 
-        parseTicket(branchParts[1], ticket);
+        if (branchParts.length > 1) {
+            parseTicket(branchParts[1], ticket);
+        }
 
-        final String shortDesc = CLEANER.removeFrom(StringUtils.defaultString(branchParts[2], ""));
-        shortDescription.setText(shortDesc);
+        if (branchParts.length > 2) {
+            final String shortDesc = CLEANER.removeFrom(StringUtils.defaultString(branchParts[2], ""));
+            shortDescription.setText(shortDesc);
+        }
+
     }
 
     private void parseAllFields(String branchName, JTextField ticket, JTextField shortDescription, JTextArea textArea) {
