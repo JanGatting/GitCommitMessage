@@ -1,5 +1,6 @@
 package de.gatting.scm;
 
+import com.google.common.base.CharMatcher;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -19,6 +20,8 @@ public class Panel {
     private JTextArea longDescription;
     private JButton changeTemplateButton;
 
+    private CharMatcher CLEANER = CharMatcher.anyOf("-_").precomputed();
+
     Panel(Project project) {
 
         String branch = "";
@@ -33,12 +36,9 @@ public class Panel {
         } else if (instance.checkVcsIsActive("Mercurial")) {
             branch = HgUtil.getCurrentRepository(project).getCurrentBranch();
         }
-
-        // If e.g feature branch feature/JiraId-1234
-        if (branch != null && branch.contains("/")) {
-            ticket.setText(StringUtils.substringAfterLast(branch, "/"));
-        } else {
-            ticket.setText(branch);
+        if (branch != null) {
+            // Branch name  matches Ticket Name
+            setTextFieldsBasedOnBranch(currentBranch.getName().trim());
         }
 
         changeTemplateButton.addActionListener(e -> {
@@ -81,6 +81,37 @@ public class Panel {
             TemplateFileHandler.storeFile(project, template.getTemplateContent());
         }
         return builder.getDialogWrapper();
+    }
+
+    private void setTextFieldsBasedOnBranch(String branch) {
+        final String[] branchParts = branch.split("/");
+        // If e.g feature branch feature/JiraId-1234
+        switch (branchParts.length) {
+            case 0: parseTicket(branch, ticket); break;
+            case 1: parseTicket(branchParts[1], ticket); break;
+            case 2: parseTicketAndShortDesc(branch, ticket, shortDescription); break;
+            default: parseAllFields(branch, ticket, shortDescription, longDescription); break;
+        }
+    }
+
+    private void parseTicket(String branchName, JTextField ticket) {
+        ticket.setText(branchName.toUpperCase());
+    }
+
+    private void parseTicketAndShortDesc(String branchName, JTextField ticket, JTextField shortDescription) {
+        String[] branchParts = branchName.split("/");
+
+        parseTicket(branchParts[1], ticket);
+
+        final String shortDesc = CLEANER.removeFrom(StringUtils.defaultString(branchParts[2], ""));
+        shortDescription.setText(shortDesc);
+    }
+
+    private void parseAllFields(String branchName, JTextField ticket, JTextField shortDescription, JTextArea textArea) {
+        final String[] branchParts = branchName.split("/");
+        parseTicketAndShortDesc(branchName, ticket, shortDescription);
+        final String longDesc = CLEANER.removeFrom(StringUtils.defaultString(branchParts[3], ""));
+        textArea.setText(longDesc);
     }
 
 }
