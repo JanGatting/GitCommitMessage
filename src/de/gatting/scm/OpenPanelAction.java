@@ -19,6 +19,7 @@ public class OpenPanelAction extends AnAction implements DumbAware {
         if (commitPanel == null)
             return;
 
+
         PanelDialog dialog = new PanelDialog(actionEvent.getProject());
         dialog.show();
         if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {

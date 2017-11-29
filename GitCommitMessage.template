@@ -1,2 +1,2 @@
-JiraId: ${ticket} ${shortDescription}
-    ${longDescription}
+JiraId: ${ticket:"JiraID-[0-9]{1,10}"} ${shortDescription}
+    ${longDescription:"(?<=_)[a-zA-Z0-9]+"}
