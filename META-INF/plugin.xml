@@ -1,23 +1,21 @@
 <idea-plugin url="https://github.com/JanGatting/GitCommitMessage">
   <id>git-commit-message-plugin</id>
   <name>Git Commit Message Plugin</name>
-  <version>1.2</version>
+  <version>1.3</version>
   <vendor email="jangatting@gmx.de">Jan Gatting</vendor>
 
   <description><![CDATA[
       <b>Create Git commit messages.</b><br/>
       The structure is defined within a template, that is customized by the user himself.<br/>
-      Ticket names are extracted from current git branches<br/>
-      e.g. feature/JiraId-1234 (git branch) -> JiraId-1234 (ticket)<br/>
-      <br />
+      Ticket names are extracted from current git branches, that is defined by a RegEx<br/>
+      e.g. feature/JiraId-1234 (git branch) - JiraId-1234 (ticket)<br/>
+      <br/>
       <b>Donate</b> using <a href="https://www.paypal.me/JanGatting" rel="nofollow">PayPal</a>
     ]]></description>
 
   <change-notes><![CDATA[
-      - Dialog Panel Resize Bug fixed
-      - New feature: Get commit message without open the dialog
-    ]]>
-  </change-notes>
+      - New feature: Individual parsing branches with RegEx
+    ]]></change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
   <idea-version since-build="145.0"/>
@@ -36,7 +34,6 @@
   </extensions>
 
   <actions>
-
       <action id="git-commit-message-plugin.OpenPanelAction" class="de.gatting.scm.OpenPanelAction"
               text="Commit message dialog"
               description="Commit message dialog"

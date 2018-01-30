@@ -39,28 +39,22 @@ public class PanelDialog extends DialogWrapper {
 
     String getCommitMessage(Project project) {
         String templateString = TemplateFileHandler.loadFile(project);
-
-        Map<String, String> valuesMap = new HashMap<>();
-        valuesMap.put(Consts.TICKET, getBranch());
-        valuesMap.put(Consts.SHORT_DESCRIPTION, panel.getShortDescription());
-        valuesMap.put(Consts.LONG_DESCRIPTION, getLongDescription(templateString));
-        StrSubstitutor sub = new StrSubstitutor(valuesMap);
-        return sub.replace(templateString);
+        templateString = CommitMessage.replaceVariableWithinTemplate(templateString, Consts.TICKET, panel.getTicket());
+        templateString = CommitMessage.replaceVariableWithinTemplate(templateString, Consts.SHORT_DESCRIPTION, panel.getShortDescription());
+        templateString = CommitMessage.replaceVariableWithinTemplate(templateString, Consts.LONG_DESCRIPTION, getLongDescription(templateString));
+        return templateString;
     }
 
     private String getLongDescription(String templateString) {
         String longDescription = panel.getLongDescription();
         // Get the empty Spaces in templates in new Line and the longDescription Variable
-        String searchString = "${" + Consts.LONG_DESCRIPTION + "}";
+        String searchString = CommitMessage.getVariableWithRegex(Consts.LONG_DESCRIPTION, templateString);
         String emptySpaces =
                 StringUtils.substringBetween(templateString, identifyLineDelimiter(templateString), searchString);
         String lineDelimiter = identifyLineDelimiter(longDescription);
         return StringUtils.replace(longDescription, lineDelimiter, lineDelimiter + emptySpaces).trim();
     }
 
-    private String getBranch() {
-        return panel.getTicket();
-    }
 
     /**
      * <h1> Identify which line delimiter is used in a string </h1>

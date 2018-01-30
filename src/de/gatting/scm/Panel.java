@@ -1,10 +1,8 @@
 package de.gatting.scm;
 
-import com.google.common.base.CharMatcher;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 
@@ -15,14 +13,12 @@ public class Panel {
     private JTextArea longDescription;
     private JButton changeTemplateButton;
 
-    private CharMatcher CLEANER = CharMatcher.anyOf("-_").precomputed();
-
     Panel(Project project) {
 
         String branch = CommitMessage.extractBranchName(project);
         if (branch != null) {
             // Branch name  matches Ticket Name
-            setTextFieldsBasedOnBranch(branch);
+            setTextFieldsBasedOnBranch(branch, project);
         }
 
         changeTemplateButton.addActionListener(e -> {
@@ -32,6 +28,28 @@ public class Panel {
             }
 
         });
+    }
+
+    private void setTextFieldsBasedOnBranch(String branchName, Project project) {
+
+        String templateString = TemplateFileHandler.loadFile(project);
+        // Ticket
+        String parsedTicket = CommitMessage.parseBranchNameByRegex(branchName, Consts.TICKET, templateString);
+        if (CommitMessage.isRegExForVariableInTemplateDefined(templateString, Consts.TICKET)) {
+            ticket.setText(parsedTicket);
+        }
+
+        // ShortDescription
+        String parsedShortDescription = CommitMessage.parseBranchNameByRegex(branchName, Consts.SHORT_DESCRIPTION, templateString);
+        if (CommitMessage.isRegExForVariableInTemplateDefined(templateString, Consts.SHORT_DESCRIPTION)) {
+            shortDescription.setText(parsedShortDescription);
+        }
+
+        // LongDescription
+        String parsedLongDescription = CommitMessage.parseBranchNameByRegex(branchName, Consts.LONG_DESCRIPTION, templateString);
+        if (CommitMessage.isRegExForVariableInTemplateDefined(templateString, Consts.LONG_DESCRIPTION)) {
+            longDescription.setText(parsedLongDescription);
+        }
     }
 
     JPanel getMainPanel() {
@@ -65,50 +83,6 @@ public class Panel {
             TemplateFileHandler.storeFile(project, template.getTemplateContent());
         }
         return builder.getDialogWrapper();
-    }
-
-    private void setTextFieldsBasedOnBranch(String branch) {
-        final String[] branchParts = branch.split("/");
-        // If e.g feature branch feature/JiraId-1234
-        switch (branchParts.length) {
-            case 0:
-                parseTicket(branch, ticket);
-                break;
-            case 1:
-                parseTicket(branchParts[1], ticket);
-                break;
-            case 2:
-                parseTicketAndShortDesc(branch, ticket, shortDescription);
-                break;
-            default:
-                parseAllFields(branch, ticket, shortDescription, longDescription);
-                break;
-        }
-    }
-
-    private void parseTicket(String branchName, JTextField ticket) {
-        ticket.setText(branchName);
-    }
-
-    private void parseTicketAndShortDesc(String branchName, JTextField ticket, JTextField shortDescription) {
-        String[] branchParts = CommitMessage.splitBranchName(branchName);
-
-        if (branchParts.length > 1) {
-            parseTicket(branchParts[1], ticket);
-        }
-
-        if (branchParts.length > 2) {
-            final String shortDesc = CLEANER.removeFrom(StringUtils.defaultString(branchParts[2], ""));
-            shortDescription.setText(shortDesc);
-        }
-
-    }
-
-    private void parseAllFields(String branchName, JTextField ticket, JTextField shortDescription, JTextArea textArea) {
-        final String[] branchParts = branchName.split("/");
-        parseTicketAndShortDesc(branchName, ticket, shortDescription);
-        final String longDesc = CLEANER.removeFrom(StringUtils.defaultString(branchParts[3], ""));
-        textArea.setText(longDesc);
     }
 
 }

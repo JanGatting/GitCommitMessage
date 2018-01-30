@@ -2,22 +2,11 @@ package de.gatting.scm;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.CommitMessageI;
-import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsDataKeys;
-import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
 import com.intellij.openapi.vcs.ui.Refreshable;
-import git4idea.GitLocalBranch;
-import git4idea.branch.GitBranchUtil;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.text.StrSubstitutor;
 import org.jetbrains.annotations.Nullable;
-import org.zmlx.hg4idea.util.HgUtil;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class GetCommitMessageAction extends AnAction {
@@ -37,6 +26,7 @@ public class GetCommitMessageAction extends AnAction {
         if (e == null) {
             return null;
         }
+
         Refreshable data = Refreshable.PANEL_KEY.getData(e.getDataContext());
         if (data instanceof CommitMessageI) {
             return (CommitMessageI) data;
@@ -48,16 +38,21 @@ public class GetCommitMessageAction extends AnAction {
     private String getCommitMessage(final Project project) {
         String templateString = TemplateFileHandler.loadFile(project);
 
-        Map<String, String> valuesMap = new HashMap<>();
         String branchName = CommitMessage.extractBranchName(project);
-        String[] branchParts = CommitMessage.splitBranchName(branchName);
-        if (branchParts.length > 1) {
-            valuesMap.put(Consts.TICKET, branchParts[1]);
-        }
-        valuesMap.put(Consts.SHORT_DESCRIPTION, "");
-        valuesMap.put(Consts.LONG_DESCRIPTION, "");
-        StrSubstitutor sub = new StrSubstitutor(valuesMap);
-        return sub.replace(templateString);
+
+        // Ticket
+        String parsedTicket = CommitMessage.parseBranchNameByRegex(branchName, Consts.TICKET, templateString);
+        templateString = CommitMessage.replaceVariableWithinTemplate(templateString, Consts.TICKET, parsedTicket);
+
+        // ShortDescription
+        String parsedShortDescription = CommitMessage.parseBranchNameByRegex(branchName, Consts.SHORT_DESCRIPTION, templateString);
+        templateString = CommitMessage.replaceVariableWithinTemplate(templateString, Consts.SHORT_DESCRIPTION, parsedShortDescription);
+
+        // LongDescription
+        String parsedLongDescription = CommitMessage.parseBranchNameByRegex(branchName, Consts.LONG_DESCRIPTION, templateString);
+        templateString = CommitMessage.replaceVariableWithinTemplate(templateString, Consts.LONG_DESCRIPTION, parsedLongDescription);
+
+        return templateString;
     }
 
 }
